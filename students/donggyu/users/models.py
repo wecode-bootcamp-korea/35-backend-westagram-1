@@ -6,5 +6,8 @@ class User(models.Model):
     password     = models.CharField(max_length=20)
     phone_number = models.CharField(max_length=15)
 
+    def __str__(self):
+        return self.name
+
     class Meta: 
         db_table = 'users'
