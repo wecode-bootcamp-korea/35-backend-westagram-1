@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-from pathlib import Path
+from pathlib     import Path
 
 from my_settings import DATABASES, SECRET_KEY
 
@@ -39,9 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_extensions',
-    'corsheaders',
-    'users'
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -52,7 +50,7 @@ MIDDLEWARE = [
     # 'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'westagram.urls'
@@ -123,10 +121,13 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-##CORS
-CORS_ORIGIN_ALLOW_ALL=True
-CORS_ALLOW_CREDENTIALS = True
+#REMOVE_APPEND_SLASH_WARNING
+APPEND_SLASH = False
 
+##CORS
+CORS_ORIGIN_ALLOW_ALL  =True
+CORS_ALLOW_CREDENTIALS = True
+    
 CORS_ALLOW_METHODS = (
     'DELETE',
     'GET',
@@ -135,7 +136,7 @@ CORS_ALLOW_METHODS = (
     'POST',
     'PUT',
 )
-
+    
 CORS_ALLOW_HEADERS = (
     'accept',
     'accept-encoding',
@@ -147,5 +148,3 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
 )
-
-APPEND_SLASH = False
