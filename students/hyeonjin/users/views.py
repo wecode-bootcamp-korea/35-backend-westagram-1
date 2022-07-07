@@ -2,9 +2,10 @@ import json
 import re
 
 from django.http import JsonResponse
-
 from django.shortcuts import render
 from django.views import View
+
+from users.models import User
 
 class SignupView(View):
     """
@@ -26,9 +27,14 @@ class SignupView(View):
         data = json.loads(request.body)
 
         # 이메일이나 패스워드가 전달되지 않는 경우 KeyError 예외처리
+        # 다른 데이터도 모두 KeyError 확인
         try:                       
-            email    = data["email"]
-            password = data["password"]
+            email        = data["email"]
+            password     = data["password"]
+            name         = data["name"]
+            phone_number = data["phone_number"]
+            created_at   = data["created_at"]
+            updated_at   = data["updated_at"]
         except KeyError:
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
 
@@ -42,3 +48,19 @@ class SignupView(View):
         if password_validation.match(data['password']) == None:
             return JsonResponse({"message": "Password Validation Error"}, status=400)
 
+        try:
+            User.objects.get(email=email)
+        except User.DoesNotExist:
+            return JsonResponse({"message": "Duplicated E-mail"}, status=400)
+
+        User.objects.create(
+            name         = name,
+            email        = email,
+            password     = password,
+            phone_number = phone_number,
+            created_at   = created_at,
+            updated_at   = updated_at
+        )
+
+        return JsonResponse({"message":"SUCCESS"}, status=201)
+        
