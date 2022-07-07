@@ -35,6 +35,7 @@ class SignupView(View):
             phone_number = data["phone_number"]
             created_at   = data["created_at"]
             updated_at   = data["updated_at"]
+            others       = data["others"]
         except KeyError:
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
 
@@ -59,8 +60,8 @@ class SignupView(View):
             password     = password,
             phone_number = phone_number,
             created_at   = created_at,
-            updated_at   = updated_at
+            updated_at   = updated_at,
+            others       = others
         )
 
         return JsonResponse({"message":"SUCCESS"}, status=201)
-        
