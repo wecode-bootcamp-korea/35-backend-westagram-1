@@ -18,7 +18,7 @@ class SignupView(View):
             phone_number = data['phone_number']
             others       = data['others']
             
-            email_validation = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+            email_validation    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             password_validation = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
 
             if not re.match(email_validation, email):
@@ -40,25 +40,14 @@ class SignupView(View):
 
         except KeyError:
            return JsonResponse({'message': 'KEY_ERROR'}, status=400)
-           
+
 class LoginView(View):
 
-#    목적: 로그인 기능을 구현
-
-#    1. client에게 사용자의 계정과 비밀번호를 받는다.
-#    2. 계정(이메일)과 비밀번호가 데이터베이스의 정보와 일치하는지 확인한다.
-
     def post(self, request):
-
-#       request.body = {
-#            email    = "email@example.com"
-#            password = "pass*123"
-#        }
-
         data = json.loads(request.body)
 
         try:
-            email = data['email']
+            email    = data['email']
             password = data['password']
 
             usr = User.objects.get(email=email)
