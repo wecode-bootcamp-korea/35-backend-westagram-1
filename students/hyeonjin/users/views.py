@@ -10,6 +10,7 @@ class SignupView(View):
     
     def post(self, request):
         data = json.loads(request.body)
+
         # 이메일이나 패스워드가 전달되지 않는 경우 KeyError 예외처리
         # 다른 데이터도 모두 KeyError 확인
         try:                       
@@ -18,7 +19,7 @@ class SignupView(View):
             name         = data['name']
             phone_number = data['phone_number']
             others       = data['others']
-
+            
             # 이메일에 @와 .이 포함되어 있는지
             # 비밀번호 8자리 이상, 문자, 숫자, 특수문자 복합인지- 확인하기 위해 정규표현식 활용 
             email_validation = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
@@ -38,7 +39,6 @@ class SignupView(View):
                 email        = email,
                 password     = password,
                 phone_number = phone_number,
-                # others       = others
             )
             return JsonResponse({'message':'SUCCESS'}, status=201)
 
