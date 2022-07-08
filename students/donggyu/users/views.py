@@ -59,5 +59,5 @@ class LoginView(View):
 
             return JsonResponse({"message": "SUCCESS"}, status = 200)                
 
-        except:
+        except KeyError:
             return JsonResponse({"message" : "KEY_ERROR"}, status = 400)
