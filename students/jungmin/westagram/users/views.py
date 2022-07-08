@@ -1,13 +1,13 @@
 import json
 import re
 
-from django.db import IntegrityError
-from django.http import JsonResponse
+from django.db    import IntegrityError
+from django.http  import JsonResponse
 from django.views import View
 
 from users.models import User
 
-class UserView(View):
+class SignupView(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
@@ -38,5 +38,3 @@ class UserView(View):
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
         except IntegrityError:
             return JsonResponse({'message': 'EMAIL_MUST_BE_UNIQUE'}, status=400)
-
-
