@@ -34,32 +34,13 @@ class SignupView(View):
                 name         = name,
                 email        = email,
                 password     = password,
-                phone_number = phone_number,
+                phone_number = phone_number
             )
             return JsonResponse({'message':'SUCCESS'}, status=201)
 
-<<<<<<< HEAD
-        # Password Validation # 비밀번호 8자리 이상, 문자, 숫자, 특수문자 복합인지 확인
-        password_validation = re.compile('^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$')
-        if password_validation.match(data['password']) == None:
-            return JsonResponse({'message': 'Password Validation Error'}, status=400)
-
-        try: 
-            User.objects.get(email=email)
-            return JsonResponse({'message': 'Duplicated E-mail'}, status=400)
-        except User.DoesNotExist:
-            pass
-        
-        User.objects.create(
-            name         = name,
-            email        = email,
-            password     = password,
-            phone_number = phone_number,
-            # others       = others
-        )
-
-        return JsonResponse({'message':'SUCCESS'}, status=201)
-
+        except KeyError:
+           return JsonResponse({'message': 'KEY_ERROR'}, status=400)
+           
 class LoginView(View):
 
 #    목적: 로그인 기능을 구현
@@ -90,7 +71,3 @@ class LoginView(View):
         except User.DoesNotExist :
             return JsonResponse({"message": "INVALID_USER"}, status=401)
 
-=======
-        except KeyError:
-           return JsonResponse({'message': 'KEY_ERROR'}, status=400)
->>>>>>> main
