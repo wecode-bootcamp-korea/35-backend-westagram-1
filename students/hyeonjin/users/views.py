@@ -62,3 +62,38 @@ class SignupView(View):
         )
 
         return JsonResponse({'message':'SUCCESS'}, status=201)
+
+class LoginView(View):
+    """
+    목적: 로그인 기능을 구현
+
+    1. client에게 사용자의 계정과 비밀번호를 받는다.
+    2. 계정(이메일)과 비밀번호가 데이터베이스의 정보와 일치하는지 확인한다.
+    """
+
+    def get(self, request):
+        """
+        request.body = {
+            email    = "email@example.com"
+            password = "pass*123"
+        }
+        """
+        data = json.loads(request.body)
+
+        try:
+            email = data['email'],
+            password = data['password']
+        except KeyError:
+            return JsonResponse({"message":"KEY_ERROR"}, status=400)
+
+        try:
+            usr = User.objects.get(email=email)
+            
+            if password == usr.password:
+                return JsonResponse({"message":"SUCCESS"}, status=200)
+            else:
+                return JsonResponse({"message":"WRONG_PASSWORD"}, status=401)
+
+        except:
+            return JsonResponse({"message": "INVALID_USER"}, status=401)
+
