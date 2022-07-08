@@ -3,6 +3,7 @@ import re
 
 from django.http  import JsonResponse
 from django.views import View
+from django.core.exceptions import ObjectDoesNotExist
 
 from users.models import User
 
@@ -48,4 +49,30 @@ class UserView(View):
 
         except:
             # 필수 데이터 입력확인
+            return JsonResponse({"message" : "KEY_ERROR"}, status = 400)
+
+class LoginView(View):
+    def post(self, request):
+        #유저 로그인
+        try:
+            data = json.loads(request.body)
+
+            post_email    = data['email']
+            post_password = data['password']
+
+            # 이메일 존재 여부 검사
+            try:
+                check = User.objects.get(email=post_email)
+            except ObjectDoesNotExist:
+                return JsonResponse({"message": "INVALID_USER"}, status = 401)
+
+            # 비밀번호 일치 여부 검사
+            if post_password != check.password:
+                return JsonResponse({"message": "INVALID_USER"}, status = 401)
+
+
+            return JsonResponse({"message": "SUCCESS"}, status = 200)                
+
+        except:
+            #필수 데이터 입력확인
             return JsonResponse({"message" : "KEY_ERROR"}, status = 400)
