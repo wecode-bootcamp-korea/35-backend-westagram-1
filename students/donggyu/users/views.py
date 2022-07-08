@@ -9,70 +9,55 @@ from users.models import User
 
 class UserView(View):
     def post(self, request):
-        # 유저 회원가입
         try:
             data = json.loads(request.body)
 
-            post_name         = data['name']
-            post_email        = data['email']
-            post_password     = data['password']
-            post_phone_number = data['phone_number']
+            name         = data['name']
+            email        = data['email']
+            password     = data['password']
+            phone_number = data['phone_number']
 
-            # 이메일 데이터 유효성 검사
-            cheak_email = re.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', post_email)
+            REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+            REGEX_PASSWORD = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
+            
+            if not re.match(REGEX_EMAIL, email):
+                return JsonResponse({"message" : "EMAIL_VALIDATE_ERROR"}, status = 400)
+            
+            if not re.match(REGEX_PASSWORD, password):
+                return JsonResponse({"message" : "PASSWORD_VALIDATE_ERROR"}, status = 400)
 
-            if cheak_email == None:
-                return JsonResponse({"message" : "EMAIL_DATA_ERROR"}, status = 400)
-
-            # 패스워드 데이터 유효성 검사
-            cheak_password = re.match('^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$', post_password)
-
-            if cheak_password == None:
-                return JsonResponse({"message" : "PASSWORD_DATA_ERROR"}, status = 400)
-
-            # 이메일 중복 검사
-            exist_query_set = User.objects.all()
-
-            for exist_object in exist_query_set:
-                if post_email == exist_object.email:
-                    return JsonResponse({"message" : "DATA_THAT_EXISTS_ERROR"}, status = 409)
-
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({"message" : "DATA_THAT_EXISTS_ERROR"}, status = 409)
 
             User.objects.create(
-                name         = post_name,
-                email        = post_email,
-                password     = post_password,
-                phone_number = post_phone_number
+                name         = name,
+                email        = email,
+                password     = password,
+                phone_number = phone_number
                 )
 
             return JsonResponse({"message": "SUCCESS"}, status = 201)
 
-        except:
-            # 필수 데이터 입력확인
+        except KeyError:
             return JsonResponse({"message" : "KEY_ERROR"}, status = 400)
 
 class LoginView(View):
     def post(self, request):
-        #유저 로그인
         try:
             data = json.loads(request.body)
 
             post_email    = data['email']
             post_password = data['password']
 
-            # 이메일 존재 여부 검사
             try:
                 check = User.objects.get(email=post_email)
             except ObjectDoesNotExist:
                 return JsonResponse({"message": "INVALID_USER"}, status = 401)
 
-            # 비밀번호 일치 여부 검사
             if post_password != check.password:
                 return JsonResponse({"message": "INVALID_USER"}, status = 401)
-
 
             return JsonResponse({"message": "SUCCESS"}, status = 200)                
 
         except:
-            #필수 데이터 입력확인
             return JsonResponse({"message" : "KEY_ERROR"}, status = 400)
