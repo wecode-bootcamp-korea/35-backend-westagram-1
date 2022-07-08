@@ -52,7 +52,10 @@ class LoginView(View):
 
             usr = User.objects.get(email=email)
             if usr.password == password:
+                print(usr.password)
+                print(password)
                 return JsonResponse({"message":"SUCCESS"}, status=200)
+               
             else:
                 return JsonResponse({"message":"WRONG_PASSWORD"}, status=401)
         except KeyError:
