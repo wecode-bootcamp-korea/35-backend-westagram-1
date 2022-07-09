@@ -1,8 +1,8 @@
-from django.shortcuts import render
 import json
 import re
+from tempfile     import TemporaryFile
 
-from django.http import JsonResponse
+from django.http  import JsonResponse
 from django.views import View
 
 from users.models import User
@@ -13,19 +13,16 @@ class SignUpView(View):
             data                = json.loads(request.body)
             email               = data["email"]
             password            = data["password"]
-            email_validation    = re.compile("^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
-            password_validation = re.compile("^.*(?=^.{8,}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%*^&+=].*$)")
+            REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+            REGEX_PASSWORD = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
 
-            if email == "" or password == "":
-                return JsonResponse({"message":"KEY_ERROR"}, status=400)
-
-            if not email_validation.match(email):
+            if not re.match(REGEX_EMAIL, value):
                 return JsonResponse({"message":"EMAIL_VALIDATION_ERROR"}, status=400)
 
-            if not password_validation.match(password):
+            if not re.match(REGEX_PASSWORD, value):
                 return JsonResponse({"message":"PASSWORD_VALIDATION_ERROR"}, status=400)
             
-            if User.objects.filter(email=email).exists():
+            if User.objects.filter(email = email).exists():
                 return JsonResponse({"message":"DUPLICATION_ERROR"}, status=400)
         
             User.objects.create(
@@ -37,3 +34,22 @@ class SignUpView(View):
             return JsonResponse({'message':'SUCCESS'}, status=201)
         except KeyError:
             return JsonResponse({"message":"KEY_ERROR"}, status=400)
+
+class LogInView(View):
+    def post(self, request):
+        try:
+            data     = json.loads(request.body)
+            email    = data['email']
+            password = data['password']
+
+            user     = User.objects.get( email = email )
+            
+            if password != user.password:
+                return JsonResponse({"message": "INVALID_USER"}, status=401)
+        
+            return JsonResponse({'message':'SUCCESS'}, status=200)
+        
+        except KeyError:
+            return JsonResponse({"message":"KEY_ERROR"}, status=400)
+        except User.DoesNotExist:
+            return JsonResponse({'message':'INVALID_USER'}, status=401)
