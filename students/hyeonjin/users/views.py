@@ -18,13 +18,13 @@ class SignupView(View):
             phone_number = data['phone_number']
             others       = data['others']
             
-            email_validation    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-            password_validation = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
+            EMAIL_VALIDATION = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+            PASSWOR_VALIDATION = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
 
-            if not re.match(email_validation, email):
+            if not re.match(EMAIL_VALIDATION, email):
                 return JsonResponse({'message': 'Email Validation Error'}, status=400)
 
-            if not re.match(password_validation, password):
+            if not re.match(PASSWOR_VALIDATION, password):
                 return JsonResponse({'message': 'Password Validation Error'}, status=400)
             
             if User.objects.filter(email=email).exists():
