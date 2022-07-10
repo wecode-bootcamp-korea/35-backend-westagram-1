@@ -1,6 +1,5 @@
 import json
 import re
-from tempfile     import TemporaryFile
 
 from django.http  import JsonResponse
 from django.views import View
@@ -16,10 +15,10 @@ class SignUpView(View):
             REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             REGEX_PASSWORD = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
 
-            if not re.match(REGEX_EMAIL, value):
+            if not re.match(REGEX_EMAIL, email):
                 return JsonResponse({"message":"EMAIL_VALIDATION_ERROR"}, status=400)
 
-            if not re.match(REGEX_PASSWORD, value):
+            if not re.match(REGEX_PASSWORD, password):
                 return JsonResponse({"message":"PASSWORD_VALIDATION_ERROR"}, status=400)
             
             if User.objects.filter(email = email).exists():
