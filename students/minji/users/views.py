@@ -9,9 +9,9 @@ from users.models import User
 class SignUpView(View):
     def post(self, request):
         try:
-            data                = json.loads(request.body)
-            email               = data["email"]
-            password            = data["password"]
+            data           = json.loads(request.body)
+            email          = data["email"]
+            password       = data["password"]
             REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             REGEX_PASSWORD = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
 
@@ -31,6 +31,7 @@ class SignUpView(View):
              mobile_number = data['mobile_number'],
             )
             return JsonResponse({'message':'SUCCESS'}, status=201)
+            
         except KeyError:
             return JsonResponse({"message":"KEY_ERROR"}, status=400)
 
@@ -41,14 +42,9 @@ class LogInView(View):
             email    = data['email']
             password = data['password']
 
-            user     = User.objects.get( email = email )
-            
-            if password != user.password:
-                return JsonResponse({"message": "INVALID_USER"}, status=401)
-        
-            return JsonResponse({'message':'SUCCESS'}, status=200)
+            if User.objects.filter( email = email, password = password).exists():
+                return JsonResponse({'message':'SUCCESS'}, status=200)
+            return JsonResponse({'message':'INVALID_USER'}, status=401)
         
         except KeyError:
             return JsonResponse({"message":"KEY_ERROR"}, status=400)
-        except User.DoesNotExist:
-            return JsonResponse({'message':'INVALID_USER'}, status=401)
