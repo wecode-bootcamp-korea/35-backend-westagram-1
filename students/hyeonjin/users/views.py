@@ -1,6 +1,6 @@
 import json
 import re
-import bcrypt
+import bcrypt, jwt
 
 from django.http  import JsonResponse
 from django.views import View
@@ -57,13 +57,15 @@ class LoginView(View):
             email    = data['email']
             password = data['password']
 
-
-            if not User.objects.filter(email=email).exists():
+            user = User.objects.get(email=email)
+            if not bcrypt.checkpw(password.encode('utf-8'), user.password.endcode('utf-8')):
                 return JsonResponse({"message":"INVALID_USER"}, status=401)
-            if not bcrypt.checkpw(password.encode('utf-8'), User.objects.get(email=email).password.endcode('utf-8')):
-                return JsonResponse({"message":"INVALID_USER"}, status=401)
-            return JsonResponse({"message":"SUCCESS"}, status=200)      
 
+            encoded_jwt = jwt.encode({'user_id': user.id}, 'secret', 'HS256')
+            return JsonResponse({"message":"SUCCESS", "access_token": encoded_jwt}, status=200)  
+                
+        except User.DoesNotExist:
+            return JsonResponse({"message":"INVALID_USER"}, status=401)
         except KeyError:
             return JsonResponse({"message":"KEY_ERROR"}, status=400)
 
