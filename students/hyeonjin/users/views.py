@@ -1,14 +1,14 @@
 import json
 import re
 
-from django.http import JsonResponse
+from django.http  import JsonResponse
 from django.views import View
 
 from users.models import User
 
 class SignupView(View):
 
-    EMAIL_VALIDATION = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    EMAIL_VALIDATION    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     PASSWORD_VALIDATION = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
     
     def post(self, request):
@@ -58,6 +58,7 @@ class LoginView(View):
                 return JsonResponse({"message":"SUCCESS"}, status=200)
             else:
                 return JsonResponse({"message":"INVALID_USER"}, status=401)
+                
         except KeyError:
             return JsonResponse({"message":"KEY_ERROR"}, status=400)
         except User.DoesNotExist :
