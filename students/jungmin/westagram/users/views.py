@@ -28,7 +28,7 @@ class SignUpView(View):
             if User.objects.filter(email=email).exists():
                 return JsonResponse({'message': 'EMAIL_MUST_BE_UNIQUE'}, status=400)
 
-            hashed_password  = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt().decode('utf-8'))
+            hashed_password  = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
             User.objects.create(
                 name          = name,
