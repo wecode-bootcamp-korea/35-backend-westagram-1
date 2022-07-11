@@ -1,5 +1,7 @@
 import json
 import re
+import bcrypt
+import jwt
 
 from django.http  import JsonResponse
 from django.views import View
@@ -17,6 +19,8 @@ class UserView(View):
             password     = data['password']
             phone_number = data['phone_number']
 
+            encoded_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
             REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
             REGEX_PASSWORD = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
             
@@ -32,7 +36,7 @@ class UserView(View):
             User.objects.create(
                 name         = name,
                 email        = email,
-                password     = password,
+                password     = encoded_password,
                 phone_number = phone_number
                 )
 
@@ -46,15 +50,10 @@ class LoginView(View):
         try:
             data = json.loads(request.body)
 
-            post_email    = data['email']
-            post_password = data['password']
+            email    = data['email']
+            password = data['password']
 
-            try:
-                check = User.objects.get(email=post_email)
-            except ObjectDoesNotExist:
-                return JsonResponse({"message": "INVALID_USER"}, status = 401)
-
-            if post_password != check.password:
+            if User.objects.filter(email=email, password=password).exists():
                 return JsonResponse({"message": "INVALID_USER"}, status = 401)
 
             return JsonResponse({"message": "SUCCESS"}, status = 200)                
