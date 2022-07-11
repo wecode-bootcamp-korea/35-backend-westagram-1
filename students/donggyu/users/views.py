@@ -46,15 +46,15 @@ class LoginView(View):
         try:
             data = json.loads(request.body)
 
-            post_email    = data['email']
-            post_password = data['password']
+            email    = data['email']
+            password = data['password']
 
             try:
-                check = User.objects.get(email=post_email)
+                check = User.objects.get(email=email)
             except ObjectDoesNotExist:
                 return JsonResponse({"message": "INVALID_USER"}, status = 401)
 
-            if post_password != check.password:
+            if password != check.password:
                 return JsonResponse({"message": "INVALID_USER"}, status = 401)
 
             return JsonResponse({"message": "SUCCESS"}, status = 200)                
