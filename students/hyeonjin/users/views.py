@@ -7,6 +7,10 @@ from django.views import View
 
 from users.models import User
 
+
+EMAIL_VALIDATION    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+PASSWORD_VALIDATION = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
+
 class SignupView(View):
     
     def post(self, request):
@@ -19,11 +23,8 @@ class SignupView(View):
             phone_number = data['phone_number']
             others       = data['others']
 
-            # global EMAIL_VALIDATION
-            # global PASSWORD_VALIDATION
-
-            EMAIL_VALIDATION    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-            PASSWORD_VALIDATION = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
+            global EMAIL_VALIDATION
+            global PASSWORD_VALIDATION
 
             if not re.match(EMAIL_VALIDATION, email):
                 return JsonResponse({'message': 'Email Validation Error'}, status=400)
