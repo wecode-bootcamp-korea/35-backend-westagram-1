@@ -2,9 +2,10 @@ import json, re, bcrypt, jwt
 
 from django.http  import JsonResponse
 from django.views import View
+from django.conf  import settings
 
 from users.models import User
-from django.conf import settings
+
 
 
 EMAIL_VALIDATION    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
