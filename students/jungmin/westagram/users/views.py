@@ -1,5 +1,4 @@
-import json
-import re
+import json, re, bcrypt
 
 from django.http  import JsonResponse
 from django.views import View
@@ -27,13 +26,30 @@ class SignUpView(View):
             if User.objects.filter(email=email).exists():
                 return JsonResponse({'message': 'EMAIL_MUST_BE_UNIQUE'}, status=400)
 
+            hashed_password  = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
             User.objects.create(
                 name          = name,
                 email         = email,
-                password      = password,
+                password      = hashed_password,
                 mobile_number = mobile_number
             )
 
             return JsonResponse({'message': 'SUCCESS'}, status=201)
+        except KeyError:
+            return JsonResponse({'message':'KEY_ERROR'}, status=400)
+
+class SignInView(View):
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+
+            email    = data['email']
+            password = data['password']
+
+            if not User.objects.filter(email=email, password=password).exists():
+                return JsonResponse({'message':'INVALID_USER'}, status=401)
+            
+            return JsonResponse({'message':'SUCCESS'}, status=200)
         except KeyError:
             return JsonResponse({'message':'KEY_ERROR'}, status=400)
