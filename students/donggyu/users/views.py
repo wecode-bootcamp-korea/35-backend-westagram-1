@@ -36,7 +36,7 @@ class UserView(View):
                 phone_number = phone_number
                 )
 
-            return JsonResponse({"message": "SIGN_UP_SUCCESS"}, status = 201)
+            return JsonResponse({"message" : "SIGN_UP_SUCCESS"}, status = 201)
 
         except KeyError:
             return JsonResponse({"message" : "KEY_ERROR"}, status = 400)
@@ -49,12 +49,12 @@ class LoginView(View):
             email    = data['email']
             password = data['password']
 
-            if User.objects.filter(email=email, password=password).exists():
-                return JsonResponse({"message": "INVALID_USER"}, status = 401)
+            if not bcrypt.checkpw(password.encode('utf-8'), User.objects.get(email=email).password.encode('utf-8')):
+                return JsonResponse({"message" : "INVALID_USER"}, status = 401)
 
             acess_token = jwt.encode({'id' : User.objects.get(email=email).id}, 'secret', algorithm='HS256')
 
-            return JsonResponse({"message": "SIGN_IN_SUCCESS", "token": acess_token}, status = 200)
+            return JsonResponse({"message" : "SIGN_IN_SUCCESS", "token": acess_token}, status = 200)
 
         except KeyError:
             return JsonResponse({"message" : "KEY_ERROR"}, status = 400)
