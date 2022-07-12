@@ -4,7 +4,7 @@ from django.http  import JsonResponse
 from django.views import View
 
 from users.models import User
-from my_settings import SECRET_KEY, ALGORITHM
+from django.conf import settings
 
 
 EMAIL_VALIDATION    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
@@ -60,7 +60,7 @@ class LoginView(View):
             if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
                 return JsonResponse({"message":"INVALID_USER"}, status=401)
 
-            encoded_jwt = jwt.encode({'user_id': user.id}, SECRET_KEY, ALGORITHM)
+            encoded_jwt = jwt.encode({'user_id': user.id}, settings.SECRET_KEY, settings.ALGORITHM)
             return JsonResponse({"message":"SUCCESS", "access_token": encoded_jwt}, status=200)  
                 
         except User.DoesNotExist:
