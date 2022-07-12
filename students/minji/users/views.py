@@ -58,7 +58,7 @@ class LogInView(View):
             return JsonResponse({"message":"SUCCESS", "access_token": token}, status=200)
         
         except User.DoesNotExist:
-            return JsonResponse({"message":"INVALID_USER"}, status=401)
+            return JsonResponse({"message":"INVALID_USER"}, status=400)
 
         except KeyError:
             return JsonResponse({"message":"KEY_ERROR"}, status=400)
