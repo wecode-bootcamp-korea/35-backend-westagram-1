@@ -1,5 +1,4 @@
-import json
-import re
+import json, re, bcrypt
 
 from django.http  import JsonResponse
 from django.views import View
@@ -27,10 +26,12 @@ class SignUpView(View):
             if User.objects.filter(email=email).exists():
                 return JsonResponse({'message': 'EMAIL_MUST_BE_UNIQUE'}, status=400)
 
+            hashed_password  = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
             User.objects.create(
                 name          = name,
                 email         = email,
-                password      = password,
+                password      = hashed_password,
                 mobile_number = mobile_number
             )
 
