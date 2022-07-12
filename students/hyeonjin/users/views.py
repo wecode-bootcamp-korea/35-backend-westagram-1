@@ -1,15 +1,17 @@
 import json
 import re
+import bcrypt
 
 from django.http  import JsonResponse
 from django.views import View
 
 from users.models import User
 
-class SignupView(View):
 
-    EMAIL_VALIDATION    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-    PASSWORD_VALIDATION = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
+EMAIL_VALIDATION    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+PASSWORD_VALIDATION = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
+
+class SignupView(View):
     
     def post(self, request):
         data = json.loads(request.body)
@@ -33,10 +35,12 @@ class SignupView(View):
             if User.objects.filter(email=email).exists():
                 return JsonResponse({'message': 'E-mail Duplicate'}, status=400)
 
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
             User.objects.create(
                 name         = name,
                 email        = email,
-                password     = password,
+                password     = hashed_password,
                 phone_number = phone_number
             )
             return JsonResponse({'message':'SUCCESS'}, status=201)
@@ -52,7 +56,7 @@ class LoginView(View):
         try:
             email    = data['email']
             password = data['password']
-
+    
             if not User.objects.filter(email=email, password=password).exists():
                 return JsonResponse({"message":"INVALID_USER"}, status=401)
             return JsonResponse({"message":"SUCCESS"}, status=200)    
